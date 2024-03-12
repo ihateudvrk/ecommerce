@@ -8,15 +8,15 @@ Tag.init(
   {
     // define columns
     id: {
-      type: Datatypes.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false, 
       primaryKey: true,
       autoIncrement: true,
     },
 
-    id: {
-      type: DataTypes.STRING,
-    },
+    // id: {
+      // type: DataTypes.STRING,
+    // },
   },
   {
     sequelize,
