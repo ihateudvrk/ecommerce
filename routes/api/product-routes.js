@@ -16,11 +16,11 @@ router.get('/', (req, res) => {
     include: [{
       model: Tag,
       attributes: ['id', 'tag_name']
-    }],
-    include: [{
-      model: ProductTag,
-      attributes: ['id', 'tag_id', 'product_id', ]
     }]
+    // include: [{
+    //   model: ProductTag,
+    //   attributes: ['id', 'tag_id', 'product_id', ]
+    // }]
   })
   .then(productData => res.json(productData))
   .catch(err => {
@@ -42,11 +42,11 @@ router.get('/:id', (req, res) => {
     include: [{
       model: Tag,
       attributes: ['id', 'tag_name']
-    }],
-    include: [{
-      model: ProductTag,
-      attributes: ['id', 'tag_id', 'product_id', ]
     }]
+    // include: [{
+    //   model: ProductTag,
+    //   attributes: ['id', 'tag_id', 'product_id', ]
+    // }]
   })
   .then(productData => res.json(productData))
   .catch(err => {
