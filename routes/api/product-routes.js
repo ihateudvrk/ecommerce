@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
     attributes: ['id', 'product_name'],
     include: [{
       model: Category,
-        attributes: ['id', 'category_name']
+      attributes: ['id', 'category_name']
     }],
     include: [{
       model: Tag,
@@ -22,11 +22,11 @@ router.get('/', (req, res) => {
     //   attributes: ['id', 'tag_id', 'product_id', ]
     // }]
   })
-  .then(productData => res.json(productData))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  });
+    .then(productData => res.json(productData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 // get one product
@@ -37,7 +37,7 @@ router.get('/:id', (req, res) => {
     attributes: ['id', 'product_name'],
     include: [{
       model: Category,
-        attributes: ['id', 'category_name']
+      attributes: ['id', 'category_name']
     }],
     include: [{
       model: Tag,
@@ -48,11 +48,11 @@ router.get('/:id', (req, res) => {
     //   attributes: ['id', 'tag_id', 'product_id', ]
     // }]
   })
-  .then(productData => res.json(productData))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  });
+    .then(productData => res.json(productData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 // create new product
@@ -65,7 +65,12 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-  Product.create(req.body)
+  Product.create(req.body, {
+    product_name: "Basketball",
+    price: 200.00,
+    stock: 3,
+    tagIds: [1, 2, 3, 4]
+  })
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
@@ -90,33 +95,44 @@ router.post('/', (req, res) => {
 // update product
 router.put('/:id', (req, res) => {
   // update product data
-  Product.update(req.body, {
-    where: {
-      id: req.params.id,
+  Product.update(req.body,
+
+    {
+      product_name: req.body.product_name,
+      price: req.body.price,
+      stock: req.body.stock,
+      category_id: req.body.category_id,
     },
-  })
+
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+
+  )
     .then((product) => {
       if (req.body.tagIds && req.body.tagIds.length) {
-        
+
         ProductTag.findAll({
           where: { product_id: req.params.id }
         }).then((productTags) => {
           // create filtered list of new tag_ids
           const productTagIds = productTags.map(({ tag_id }) => tag_id);
           const newProductTags = req.body.tagIds
-          .filter((tag_id) => !productTagIds.includes(tag_id))
-          .map((tag_id) => {
-            return {
-              product_id: req.params.id,
-              tag_id,
-            };
-          });
+            .filter((tag_id) => !productTagIds.includes(tag_id))
+            .map((tag_id) => {
+              return {
+                product_id: req.params.id,
+                tag_id,
+              };
+            });
 
-            // figure out which ones to remove
+          // figure out which ones to remove
           const productTagsToRemove = productTags
-          .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-          .map(({ id }) => id);
-                  // run both actions
+            .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
+            .map(({ id }) => id);
+          // run both actions
           return Promise.all([
             ProductTag.destroy({ where: { id: productTagsToRemove } }),
             ProductTag.bulkCreate(newProductTags),
@@ -137,12 +153,12 @@ router.delete('/:id', (req, res) => {
   Product.destroy({
     product_name: req.body.product_name
   })
-  .then((productData) => {
-    res.json(productData);
-  })
-  .catch((err) => {
-    res.json(err);
-  });
+    .then((productData) => {
+      res.json(productData);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
 });
 
 module.exports = router;

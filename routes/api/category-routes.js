@@ -24,17 +24,15 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-  Category.findOne({
-    attributes: ['id', 'category_name'],
+  // TODO: Where clause, Look at find bypk 13-6-stu routes
+  Category.findByPk(req.params.id, {
     include: [{
       model: Product,
       attributes: ['id', 'product_name', 'price']
     }]
   })
-  .then(categoryData => res.json(categoryData))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
+  .then((categoryDataData) => {
+    res.json(categoryDataData);
   });
 });
 
